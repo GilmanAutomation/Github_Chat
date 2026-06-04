@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id            String         @id @default(cuid())
+  username      String         @unique
+  passwordHash  String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  settings      Settings?
+  conversations Conversation[]
+  modelUsages   ModelUsage[]
+}
+
+model Settings {
+  id              String  @id @default(cuid())
+  userId          String  @unique
+  user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  apiKeyEncrypted String?
+  apiKeyIv        String?
+  apiKeyTag       String?
+  defaultModel    String  @default("openai/gpt-4.1-mini")
+  temperature     Float   @default(0.7)
+  maxTokens       Int     @default(4096)
+  theme           String  @default("system")
+  systemPrompt    String  @default("You are a helpful assistant.")
+}
+
+model Conversation {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String    @default("New Chat")
+  model     String    @default("openai/gpt-4.1-mini")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  messages  Message[]
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           String
+  content        String
+  tokenCount     Int?
+  createdAt      DateTime     @default(now())
+}
+
+model ModelUsage {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  model        String
+  messagesSent Int      @default(0)
+  inputTokens  Int      @default(0)
+  outputTokens Int      @default(0)
+  updatedAt    DateTime @updatedAt
+
+  @@unique([userId, model])
+}
+
+model OtpVerification {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  otp          String
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+}
+
+
