@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && prisma db push && next build",
+    "postinstall": "prisma generate",
     "start": "next start",
     "lint": "eslint"
   },
@@ -12,11 +13,8 @@
     "@azure-rest/ai-inference": "^1.0.0-beta.6",
     "@azure/core-auth": "^1.10.1",
     "@azure/core-sse": "^2.3.0",
-    "@prisma/adapter-better-sqlite3": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "bcryptjs": "^3.0.3",
-    "better-sqlite3": "^12.10.0",
-    "dotenv": "^17.4.2",
     "highlight.js": "^11.11.1",
     "iron-session": "^8.0.4",
     "lucide-react": "^1.17.0",
